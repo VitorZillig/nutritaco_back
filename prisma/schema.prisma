@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id       String  @id @default(uuid())
+  user     String
+  password String
+  email    String  @unique
+  dietas   Dieta[]
+
+  @@map("usuarios")
+}
+
+model Dieta {
+  id        String          @id @default(uuid())
+  name      String          @unique
+  id_user   String
+  user      Usuario         @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  alimentos DietaAlimento[]
+
+  @@map("dietas")
+}
+
+model Alimento {
+  num             Int             @id
+  name            String          @unique
+  category        String
+  umidade         Float
+  kcal            Float
+  proteina        Float
+  lipideo         Float
+  colesterol      Float
+  carboidrato     Float
+  fibra_alimentar Float
+  calcio          Float
+  magnesio        Float
+  manganes        Float
+  fosforo         Float
+  ferro           Float
+  sodio           Float
+  potassio        Float
+  cobre           Float
+  zinco           Float
+  retinol         Float
+  tiamina         Float
+  riboflavina     Float
+  piridoxina      Float
+  niacina         Float
+  vitamina_c      Float
+  dietas DietaAlimento[]
+  @@map("alimentos")
+}
+
+model DietaAlimento {
+  alimento_id Int
+  alimento    Alimento @relation(fields: [alimento_id], references: [num], onDelete: Cascade)
+  dieta_id    String
+  dieta       Dieta    @relation(fields: [dieta_id], references: [id], onDelete: Cascade)
+  quant Float @default(100)
+
+  @@id([alimento_id, dieta_id])
+  @@map("dieta_alimento")
+}
